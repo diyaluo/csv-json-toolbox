@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSV/JSON Toolbox — Convert, Split, Merge &amp; Validate Locally, No Upload</title>
+  <meta name="description" content="Convert CSV to JSON/JSONL and back, split oversized files by row while keeping headers, merge shards, validate column counts and JSON, and sample large datasets. One command, fully local with no dependencies — sensitive data never leaves your machine.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://diyaluo.github.io/csv-json-toolbox/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="CSV/JSON Toolbox — Convert, Split, Merge &amp; Validate Locally, No Upload">
+  <meta property="og:description" content="Local CSV/JSON converter, splitter, merger and validator for analysts. No upload, no API key, handles Excel BOM and huge files row-by-row.">
+  <meta property="og:url" content="https://diyaluo.github.io/csv-json-toolbox/">
+  <meta name="twitter:card" content="summary">
+  <link rel="sitemap" type="application/xml" href="/csv-json-toolbox/sitemap.xml">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "CSV/JSON Toolbox",
+      "url": "https://diyaluo.github.io/csv-json-toolbox/",
+      "description": "Convert CSV to JSON/JSONL and back, split oversized files by row while keeping headers, merge shards, validate column counts and JSON, and sample large datasets. One command, fully local with no dependencies — sensitive data never leaves your machine.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Windows, macOS, Linux",
+      "offers": {
+        "@type": "Offer",
+        "price": "7.99",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "CSV to JSON/JSONL and back",
+        "Header-aware large file splitting",
+        "Shard merging",
+        "Column and JSON validation reports",
+        "Random and first-N sampling",
+        "Excel BOM handling, fully offline"
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Free Online Tools",
+          "item": "https://diyaluo.github.io/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "CSV/JSON Toolbox",
+          "item": "https://diyaluo.github.io/csv-json-toolbox/"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does my data get uploaded anywhere?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The toolbox runs entirely on your local computer as a command-line utility with no network calls, so sensitive CSV and JSON data never leaves your machine."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can it handle the BOM added by Excel CSV exports?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. It detects and handles the UTF-8 byte-order mark that Excel adds, so the first column name is read correctly instead of carrying hidden characters."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does splitting keep headers intact?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "When you split a CSV by row count, every output shard automatically repeats the original header row, so each chunk opens and imports correctly on its own."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does validation actually check?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It verifies that every CSV row has the expected number of columns and that JSON/JSONL content is legal, then reports the specific lines that fail instead of failing silently at import time."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need Python packages or an API key?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No external dependencies and no API key. It runs with a local runtime and a single command, file in and file out."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <style>
+    :root {
+      --bg: #f5f7fa; --card: #ffffff; --primary: #0f766e; --primary-hover: #0d5d56;
+      --accent: #f59e0b; --text: #1a1a2e; --text-secondary: #4b5563;
+      --border: #e5e7eb; --radius: 14px;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+      --shadow-lg: 0 10px 30px rgba(15,118,110,.12);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+      background:var(--bg); color:var(--text); line-height:1.65; }
+    .wrap { max-width:1080px; margin:0 auto; padding:0 24px; }
+    header { background:var(--card); border-bottom:1px solid var(--border); padding:16px 0; position:sticky; top:0; z-index:10; }
+    .header-inner { display:flex; align-items:center; justify-content:space-between; }
+    .logo { display:flex; align-items:center; gap:10px; font-weight:800; font-size:19px; color:var(--text); text-decoration:none; }
+    .logo-icon { width:34px; height:34px; background:var(--primary); border-radius:9px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:17px; }
+    .header-cta { background:var(--primary); color:#fff; padding:9px 18px; border-radius:9px; text-decoration:none; font-weight:600; font-size:14px; }
+    .header-cta:hover { background:var(--primary-hover); }
+    section { padding:56px 0; }
+    .hero { background:linear-gradient(135deg,#ecfdf5 0%,#f5f7fa 60%); text-align:center; padding:72px 0 64px; }
+    .badge { display:inline-block; background:#d1fae5; color:var(--primary); font-weight:700; font-size:13px; padding:6px 14px; border-radius:999px; margin-bottom:18px; }
+    h1 { font-size:42px; line-height:1.2; letter-spacing:-.5px; margin-bottom:18px; }
+    .hero p.lead { font-size:19px; color:var(--text-secondary); max-width:720px; margin:0 auto 30px; }
+    .cta-row { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+    .btn { display:inline-block; padding:14px 28px; border-radius:10px; font-weight:700; text-decoration:none; font-size:16px; transition:.15s; }
+    .btn-primary { background:var(--primary); color:#fff; box-shadow:var(--shadow-lg); }
+    .btn-primary:hover { background:var(--primary-hover); transform:translateY(-1px); }
+    .trust { margin-top:22px; font-size:14px; color:var(--text-secondary); display:flex; gap:22px; justify-content:center; flex-wrap:wrap; }
+    .trust span::before { content:"✓ "; color:var(--primary); font-weight:800; }
+    h2 { font-size:30px; letter-spacing:-.3px; margin-bottom:14px; }
+    .sub { color:var(--text-secondary); font-size:17px; max-width:760px; margin-bottom:34px; }
+    .grid { display:grid; gap:22px; }
+    .grid-3 { grid-template-columns:repeat(3,1fr); }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:26px; box-shadow:var(--shadow); }
+    .card .ico { font-size:28px; margin-bottom:12px; }
+    .card h3 { font-size:18px; margin-bottom:8px; }
+    .card p { color:var(--text-secondary); font-size:15px; }
+    .pain { background:#fff; border-left:4px solid var(--accent); }
+    .steps { counter-reset:step; }
+    .step { display:flex; gap:18px; align-items:flex-start; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:22px 24px; margin-bottom:16px; box-shadow:var(--shadow); }
+    .step::before { counter-increment:step; content:counter(step); flex:0 0 42px; height:42px; background:var(--primary); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:18px; }
+    .step h3 { font-size:17px; margin-bottom:4px; }
+    .step p { color:var(--text-secondary); font-size:15px; }
+    .compare { width:100%; border-collapse:collapse; background:var(--card); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+    .compare th,.compare td { padding:15px 18px; text-align:left; border-bottom:1px solid var(--border); font-size:15px; }
+    .compare th { background:var(--primary); color:#fff; }
+    .compare tr:last-child td { border-bottom:none; }
+    .yes { color:var(--primary); font-weight:800; }
+    .no { color:#dc2626; font-weight:800; }
+    .faq details { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:18px 22px; margin-bottom:12px; box-shadow:var(--shadow); }
+    .faq summary { font-weight:700; font-size:16px; cursor:pointer; list-style:none; }
+    .faq summary::-webkit-details-marker { display:none; }
+    .faq summary::before { content:"+ "; color:var(--primary); font-weight:800; }
+    .faq details[open] summary::before { content:"− "; }
+    .faq p { color:var(--text-secondary); margin-top:10px; font-size:15px; }
+    .final-cta { background:var(--primary); color:#fff; text-align:center; border-radius:var(--radius); padding:54px 32px; }
+    .final-cta h2 { color:#fff; }
+    .final-cta p { color:#d1fae5; max-width:640px; margin:0 auto 28px; font-size:17px; }
+    .final-cta .btn-light { background:#fff; color:var(--primary); }
+    footer { background:#111827; color:#9ca3af; padding:36px 0; font-size:14px; }
+    footer a { color:#d1d5db; text-decoration:none; }
+    footer .wrap { display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+    @media(max-width:820px){ .grid-3{grid-template-columns:1fr;} h1{font-size:32px;} .hero{padding:52px 0;} }
+</style>
+</head>
+
+<body>
+<header>
+  <div class="wrap header-inner">
+    <a class="logo" href="https://diyaluo.github.io/"><span class="logo-icon">▦</span> DIYaluo Tools</a>
+    <a class="header-cta" href="https://elbertscribe6.gumroad.com/l/bgjiix">Get the Tool</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="badge">🔒 100% Local &amp;mdash; No Upload, No Dependencies</span>
+    <h1>Reshape CSV and JSON Files on Your Own Machine, Without Uploading Data</h1>
+    <p class="lead">A single command-line toolbox for the data wrangling tasks analysts hit every day &amp;mdash; format conversion, splitting, merging, validation and sampling &amp;mdash; running fully offline so confidential operational and financial data never reaches a third-party server.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://elbertscribe6.gumroad.com/l/bgjiix">Get CSV/JSON Toolbox — $7.99</a>
+    </div>
+    <div class="trust">
+      <span>Runs offline on Windows / macOS / Linux</span><span>No API key or subscription</span><span>Handles Excel BOM and huge files</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Why Browser and Online Converters Keep Letting Analysts Down</h2>
+    <p class="sub">Data files from real systems are large, inconsistently encoded and often confidential. Generic web tools are built for small, clean samples.</p>
+    <div class="grid grid-3">
+      <div class="card pain"><div class="ico">📤</div><h3>Upload size and privacy limits</h3><p>Online converters cap file size and require the upload, which is a compliance problem when the CSV contains customer records, transactions or employee data.</p></div>
+      <div class="card pain"><div class="ico">🧱</div><h3>Broken headers after splitting</h3><p>Naive split tools divide rows but drop or repeat the header on every shard, forcing manual cleanup before each chunk can be opened or imported.</p></div>
+      <div class="card pain"><div class="ico">🧪</div><h3>Silent format errors</h3><p>JSONL with one bad line or a CSV whose column count drifts midway often passes conversion and fails much later, inside the database import.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:#fff;">
+  <div class="wrap">
+    <h2>What It Does</h2>
+    <p class="sub">The high-frequency operations data, ops and finance teams run on exported files, packaged into one local toolbox.</p>
+    <div class="grid grid-3">
+      <div class="card"><div class="ico">🔁</div><h3>CSV to JSON and back</h3><p>Convert CSV/Excel exports to JSON or JSONL using the header row as field names, and reverse JSON arrays back into clean CSV.</p></div>
+      <div class="card"><div class="ico">✂️</div><h3>Header-aware splitting</h3><p>Split oversized CSV by row count while preserving the header on every shard, sized for upload limits or parallel processing.</p></div>
+      <div class="card"><div class="ico">🧲</div><h3>Shard merging</h3><p>Recombine multiple split files back into one consistent dataset with a single command.</p></div>
+      <div class="card"><div class="ico">✔️</div><h3>Batch validation</h3><p>Check column-count consistency across rows and validate JSON/JSONL legality, producing a report that flags the exact bad lines.</p></div>
+      <div class="card"><div class="ico">🎲</div><h3>Fast sampling</h3><p>Pull random or first-N rows to inspect a huge file quickly without opening the entire dataset in a spreadsheet.</p></div>
+      <div class="card"><div class="ico">🔐</div><h3>BOM and encoding safe</h3><p>Handles the UTF-8 BOM that Excel exports add and runs with no external dependencies, file in and file out.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>From Raw Export to Clean Data in Four Steps</h2>
+    <div class="steps">
+      <div class="step"><div><h3>Drop in your file</h3><p>Point the toolbox at a CSV, JSON or JSONL export on your local machine; nothing is uploaded.</p></div></div>
+      <div class="step"><div><h3>Pick the operation</h3><p>Choose convert, split, merge, validate or sample with a single explicit command.</p></div></div>
+      <div class="step"><div><h3>Run it offline</h3><p>Processing happens locally with no dependencies or API calls, even on very large files.</p></div></div>
+      <div class="step"><div><h3>Collect the output</h3><p>Get consistently headed shards, validated JSON or a sample ready for import, analysis or sharing.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:#fff;">
+  <div class="wrap">
+    <h2>Local Tool vs. Online Services</h2>
+    <table class="compare">
+      <thead><tr><th>Capability</th><th>This local tool</th><th>Typical online service</th></tr></thead>
+      <tbody>
+        <tr><td>Files uploaded to a server</td><td class="yes">Never — fully offline</td><td class="no">Yes, required</td></tr>
+        <tr><td>Header preserved on every split shard</td><td class="yes">Guaranteed</td><td class="no">Often missing</td></tr>
+        <tr><td>JSON/CSV validation report</td><td class="yes">Built in</td><td class="no">Rarely offered</td></tr>
+        <tr><td>File size limits</td><td class="yes">Local, bounded by disk</td><td class="no">Strict web caps</td></tr>
+        <tr><td>API key or subscription</td><td class="yes">None, one-time</td><td class="no">Account required</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="wrap">
+    <h2>Frequently Asked Questions</h2>
+    <details><summary>Does my data get uploaded anywhere?</summary><p>No. The toolbox runs entirely on your local computer as a command-line utility with no network calls, so sensitive CSV and JSON data never leaves your machine.</p></details>
+    <details><summary>Can it handle the BOM added by Excel CSV exports?</summary><p>Yes. It detects and handles the UTF-8 byte-order mark that Excel adds, so the first column name is read correctly instead of carrying hidden characters.</p></details>
+    <details><summary>How does splitting keep headers intact?</summary><p>When you split a CSV by row count, every output shard automatically repeats the original header row, so each chunk opens and imports correctly on its own.</p></details>
+    <details><summary>What does validation actually check?</summary><p>It verifies that every CSV row has the expected number of columns and that JSON/JSONL content is legal, then reports the specific lines that fail instead of failing silently at import time.</p></details>
+    <details><summary>Do I need Python packages or an API key?</summary><p>No external dependencies and no API key. It runs with a local runtime and a single command, file in and file out.</p></details>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="final-cta">
+      <h2>Stop Fighting CSV and JSON Exports by Hand</h2>
+      <p>Get the local toolbox that converts, splits, merges, validates and samples your data files without uploads, subscriptions or per-file limits. One-time download.</p>
+      <div class="cta-row" style="justify-content:center;">
+        <a class="btn btn-light" href="https://elbertscribe6.gumroad.com/l/bgjiix">Get CSV/JSON Toolbox — $7.99</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>&copy; 2026 DIYaluo Tools &mdash; local, privacy-first software.</div>
+    <div><a href="https://diyaluo.github.io/">All tools</a> &nbsp;|&nbsp; <a href="https://elbertscribe6.gumroad.com/l/bgjiix">Gumroad store</a></div>
+  </div>
+</footer>
+</body>
+</html>
